@@ -59,11 +59,16 @@ public class CodeTest02 {
 
             else if (routesArray[i][0] == "S"){     // 아래로 이동
                 s[0] += Integer.parseInt(routesArray[i][1]);    // S은 y축 + n
-                if (listIdx01.contains(s[0])&&(listIdx02.get(i) <= s[1])){
+                if (listIdx02.contains(s[1]) && (listIdx01.get(i) >= s[0])){
+                    s[0] = reset[0];
+                }
+            }
+            else if (routesArray[i][0] == "E"){
+                s[1] += Integer.parseInt(routesArray[i][1]);   // E은 y축 + n
+                if (listIdx01.contains(s[0])&&(listIdx02.get(i) >= s[1])){
                     s[1] = reset[1];
                 }
             }
-            else if (routesArray[i][0] == "E") s[1] += Integer.parseInt(routesArray[i][1]);   // E은 y축 + n
 
         }
         System.out.println("routesArray = " + routesArray.length);
