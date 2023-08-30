@@ -1,86 +1,98 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
 
-public class CodeTest02 {
+class CodeTest02 {
     public int[] solution(String[] park, String[] routes) {
-        String[][] checkerBoard = new String[park.length][park[0].length()];
-        String[][] routesArray = new String[routes.length][2];
-        int s[] = new int[2];
-        ArrayList<Integer> listIdx01 = new ArrayList<Integer>();
-        ArrayList<Integer> listIdx02 = new ArrayList<Integer>();
+        String[][] routesArray = new String[routes.length][2];          // 방향 명령을 담는 2차원 배열
+        int s[] = new int[2];                                           // 시작 좌표 값
+        ArrayList<Integer> listIdx01 = new ArrayList<Integer>();        // 장애물 y좌표 값
+        ArrayList<Integer> listIdx02 = new ArrayList<Integer>();        // 장애물 x좌표 값
         String tmp;
-        int l, r = 0;
+        int l;
 
 
-        for (int i = 0; i < park.length; i++) {         // park를 2차원 배열로. 문자열 길이 x park의 길이
+        for (int i = 0; i < park.length; i++) {                         // 시작 지점, 장애물 좌표 값 구하기
             l = 0;
-            for (char c : park[i].toCharArray()) {
-                checkerBoard[i][l] = String.valueOf(c);
-                if (c == 'S') {
-                    s[0] = i;
-                    s[1] = l;
-                }
-                ;     // 시작 좌표 저장
-                if (c == 'X') {                   // 장애물 좌표 값 저장
-                    listIdx01.add(i);
-                    listIdx02.add(l);
+            for (char c : park[i].toCharArray()) {                      // park 배열 순회
+                if (c == 'S') {                                         // 시작 지점을 찾으면 실행
+                    s[0] = i;                                           // 시작 지점 y축
+                    s[1] = l;                                           // 시작 지점 x축
+                };
+                if (c == 'X') {                                         // 장애물을 찾으면 실행
+                    listIdx01.add(i);                                   // 장애물 y축
+                    listIdx02.add(l);                                   // 장애물 x축
                 }
                 l++;
             }
         }
-
-        for (int i = 0; i < routes.length; i++) {        // 방향 좌표 값 추출
-            tmp = routes[i].replace(" ", "");       // 요소 안에 공백 제거
+        int[][] obstacle = new int[listIdx01.size()][2];                // 장애물 x,y축을 2차원 배열로 묶기
+        for(int i=0; i<obstacle.length;i++){                            // 장애물의 갯수 만큼 실행
+            obstacle[i][0] = listIdx01.get(i);                          // 장애물 y축 저장
+            obstacle[i][1] = listIdx02.get(i);                          // 장애물 x축 저장
+        }
+        for (int i = 0; i < routes.length; i++) {                       // 이동 명령 개수만큼 실행
+            tmp = routes[i].replace(" ", "");        // 이동 명령 공백 없애서 임시 저장
             for (int j = 0; j < 2; j++) {
-                routesArray[i][j] = tmp.split("")[j]; // routes 요소를 다시 배열로 변환하여 2차원 배열에 할당
-
+                routesArray[i][j] = tmp.split("")[j];             // 방향과 이동할 거리를 잘라서 배열로 변환
             }
         }
-        int[] reset = new int[2];       // 장애물을 위한 값 초기화
-        for (int i = 0; i < routesArray.length; i++) {
-            reset[0] = s[0];            // 이동 전 y축 값 저장
-            reset[1] = s[1];            // 이동 전 x축 값 저장
+        int[] reset = new int[2];                                        // 장애물을 만날 경우 리셋하기 위한 배열
+        for (int i = 0; i < routesArray.length; i++) {                   // 이동 명령 수행
+            reset[0] = s[0];
+            reset[1] = s[1];
 
-            if (routesArray[i][0] == "N") {         // 위로 이동
-                s[0] -= Integer.parseInt(routesArray[i][1]);    // N은 y축 - n
-                if (listIdx02.contains(s[1]) && (listIdx01.get(i) <= s[0])) { // 'X' 장애물을 만났을 경우 이동 전으로 리셋
-                    s[0] = reset[0];
+
+            if (routesArray[i][0].equals("N")) {                         // 이동 명령이 북쪽일 경우
+                for (int j = 0; j < Integer.parseInt(routesArray[i][1]); j++) {
+                    s[0]--;                                              // 위로 이동
+                    for(int k=0;k<obstacle.length;k++) {
+                        if (Arrays.equals(obstacle[k], s) || (s[0] < 0)) {    // 장애물을 만났거나, 범위를 벗어난 경우
+                            s[0] = reset[0];                             // 이동 명령 수행 전의 초기 값 복구
+                            break;
+                        }
+                    }
+                    if(s[0]==reset[0])break;
                 }
             }
 
-            else if (routesArray[i][0] == "W") {    // 좌로 이동
-                s[1] -= Integer.parseInt(routesArray[i][1]);    // W은 x축 - n
-                if (listIdx01.contains(s[0])&&(listIdx02.get(i) <= s[1])){
-                    s[1] = reset[1];
+            if (routesArray[i][0].equals("W")) {                         // 이동 명령이 동쪽일 경우
+                for (int j = 0; j < Integer.parseInt(routesArray[i][1]); j++) {
+                    s[1]--;                                              // 좌로 이동
+                    for(int k=0;k<obstacle.length;k++) {
+                        if (Arrays.equals(obstacle[k], s) || (s[1] < 0)) {    // 장애물을 만났거나, 범위를 벗어난 경우
+                            s[1] = reset[1];                             // 이동 명령 수행 전의 초기 값 복구
+                            break;
+                        }
+                    }
+                    if(s[1]==reset[1])break;
                 }
             }
 
-            else if (routesArray[i][0] == "S"){     // 아래로 이동
-                s[0] += Integer.parseInt(routesArray[i][1]);    // S은 y축 + n
-                if (listIdx02.contains(s[1]) && (listIdx01.get(i) >= s[0])){
-                    s[0] = reset[0];
+            if (routesArray[i][0].equals("S")){                         // 이동 명령이 남쪽일 경우
+                for (int j = 0; j < Integer.parseInt(routesArray[i][1]); j++) {
+                    s[0]++;                                             // 아래로 이동
+                    for(int k=0;k<obstacle.length;k++) {
+                        if (Arrays.equals(obstacle[k], s) || (s[0] >= park.length)){ // 장애물을 만났거나, 범위를 벗어난 경우
+                            s[0] = reset[0];                            // 이동 명령 수행 전의 초기 값 복구
+                            break;
+                        }
+                    }
+                    if(s[0]==reset[0])break;
                 }
             }
-            else if (routesArray[i][0] == "E"){
-                s[1] += Integer.parseInt(routesArray[i][1]);   // E은 y축 + n
-                if (listIdx01.contains(s[0])&&(listIdx02.get(i) >= s[1])){
-                    s[1] = reset[1];
+            if (routesArray[i][0].equals("E")){                         // 이동 명령이 동쪽일 경우
+                for (int j = 0; j < Integer.parseInt(routesArray[i][1]); j++) {
+                    s[1]++;                                             // 우로 이동
+                    for(int k=0;k<obstacle.length;k++){
+                        if(Arrays.equals(obstacle[k], s) ||  (s[1] >= park[0].length())){   // 장애물을 만났거나, 범위를 벗어난 경우
+                            s[1] = reset[1];                        // 이동 명령 수행 전의 초기 값 복구
+                            break;
+                        }
+                    }
+                    if(s[1]==reset[1])break;
                 }
             }
-
         }
-        System.out.println("routesArray = " + routesArray.length);
-        System.out.println("Xlist " + listIdx01.get(0) + "," + listIdx02.get(0));
-        int[] a = {1};
-        return a;
-    }
-
-    public static void main(String[] args) {
-        String[] park = {"OSO", "OOO", "OXO", "OOO"};
-        String[] routes = {"E 2", "S 3", "W 1"};
-        CodeTest02 c2 = new CodeTest02();
-        c2.solution(park, routes);
+        return s;
     }
 }
