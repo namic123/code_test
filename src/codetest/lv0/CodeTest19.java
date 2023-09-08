@@ -21,9 +21,4 @@ public class CodeTest19 {
         return list;
     }
 
-    public static void main(String[] args) {
-        CodeTest19 cd = new CodeTest19();
-        int[] arr = {3,8,-10,23,19,-4,-14,27};
-        cd.minimumAbsDifference(arr);
-    }
 }
