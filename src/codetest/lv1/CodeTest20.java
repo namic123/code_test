@@ -4,7 +4,7 @@ import java.util.*;
 
 public class CodeTest20 {
     //  프로그래머스 1레벨 - 카드 뭉치
-    // Stream 사용 익숙해지기 위한 목적
+    // Arrays랑 Stream 사용 익숙해지기 위한 목적
     public String compareCards(String[] cards1, String[] cards2, List<String> equalsCard1, List<String> equalsCard2, String[] goal){
         int i =0, j=0;
         for(String str:cards2){
