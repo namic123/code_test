@@ -1,6 +1,6 @@
 package codetest.lv1;
 
-public class CodeTest12 {
+public class CodeTest22 {
     // 프로그래머스 1레벨 - 로또의 최고 순위와 최저 순위 (2021 Dev-Matching: 웹 백엔드 개발자(상반기))
     public int[] solution(int[] lottos, int[] win_nums) {
         int count_max = 7;
